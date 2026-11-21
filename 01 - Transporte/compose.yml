@@ -1,0 +1,35 @@
+services:
+  vpn:
+    image: zerotier/zerotier
+    container_name: zerotier_vpn
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - zerotier_data:/var/lib/zerotier-one
+    ports:
+      - "4242:4242/tcp"
+      - "1935:1935/tcp"
+      - "5554:5554/tcp"
+      - "8080:8080/tcp"
+      - "4200:4200/tcp"
+      - "8889:8889/udp"
+      - "18203:18203/udp"
+
+
+  mistserver:
+    image: ddvtech/mistserver
+    container_name: mistserver
+    restart: unless-stopped
+    volumes:
+      - mistserver_data:/PATH/TO/CONFIG/config.json:/config.json
+      - mistserver_data:/PATH/TO/VIDEOFOLDER:/video
+    network_mode: "service:vpn"   
+
+volumes:
+  zerotier_data:
+  mistserver_data:
+ 
